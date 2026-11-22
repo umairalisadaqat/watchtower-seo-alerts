@@ -137,6 +137,14 @@
     .f-row { grid-template-columns: 1fr; gap: 8px; } .f-key { text-align: left; }
     td.u { display: none; } th.u { display: none; }
   }
+
+  /* auto-demo cursor */
+  .cursor { position: fixed; left: 0; top: 0; width: 26px; height: 26px; z-index: 50; pointer-events: none; transform: translate(-200px, -200px); transition: transform .9s cubic-bezier(.65,0,.35,1); }
+  .cursor svg { width: 26px; height: 26px; filter: drop-shadow(0 3px 6px oklch(0% 0 0 / .5)); }
+  .cursor .ripple { position: absolute; left: -14px; top: -14px; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--text); opacity: 0; }
+  .cursor.click .ripple { animation: ripple .6s ease-out; }
+  @keyframes ripple { from { opacity: .9; transform: scale(.4); } to { opacity: 0; transform: scale(1.8); } }
+  html.demo { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
@@ -311,6 +319,65 @@
   $('runBtn').addEventListener('click', run);
   $('playBtn').addEventListener('click', play);
   run();
+
+  /* ---------- auto-demo: /?demo=1 plays a narrated walkthrough on its own ---------- */
+  if (new URLSearchParams(location.search).get('demo') === '1') {
+    document.documentElement.classList.add('demo');
+    const cur = document.createElement('div');
+    cur.className = 'cursor';
+    cur.innerHTML = '<span class="ripple"></span><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.5L10 19z" fill="#f3eee6" stroke="#141210" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+    document.body.appendChild(cur);
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const moveTo = async (el, dx = 0.5, dy = 0.5) => {
+      const r = el.getBoundingClientRect();
+      cur.style.transform = `translate(${r.left + r.width * dx}px, ${r.top + r.height * dy}px)`;
+      await sleep(950);
+    };
+    const click = async () => { cur.classList.remove('click'); void cur.offsetWidth; cur.classList.add('click'); await sleep(350); };
+    const thumbAt = () => { const r = slider.getBoundingClientRect(); return { left: r.left + 10 + (r.width - 20) * (+slider.value / DAYS), top: r.top + r.height / 2 }; };
+    const toThumb = async () => { const t = thumbAt(); cur.style.transform = `translate(${t.left}px, ${t.top}px)`; await sleep(950); };
+    async function dragTo(target, stepMs, runEach) {
+      cur.style.transition = 'transform .12s linear';
+      const dir = target > +slider.value ? 1 : -1;
+      while (+slider.value !== target) {
+        slider.value = +slider.value + dir;
+        setFill(+slider.value); $('dateLabel').textContent = nice(iso(+slider.value));
+        const t = thumbAt(); cur.style.transform = `translate(${t.left}px, ${t.top}px)`;
+        if (runEach) { while (busy) await sleep(50); await run(); await sleep(stepMs); } else await sleep(stepMs);
+      }
+      cur.style.transition = '';
+      if (!runEach) await run();
+    }
+    const beat = (k) => { try { window.parent.postMessage({ watchtowerBeat: k }, '*'); } catch (e) {} };
+    const sel = (name) => { state.sel = name; render(); };
+    const scrollToEl = async (el, off = 150) => { window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - off }); await sleep(1000); };
+    const nth = (k) => document.querySelectorAll('.finding')[k];
+    const say = async (k, ms) => { beat(k); await sleep(ms); };
+    (async () => {
+      while (!state.data) await sleep(100);
+      await say(0, 7000);                                                   // morning view
+      await moveTo(document.querySelector('.acct.CRITICAL')); await click();
+      await say(1, 300);
+      await moveTo(nth(0).querySelector('.f-key'), 0.5, 0.4); await sleep(8000);   // demos -83%
+      beat(2); await moveTo(nth(1).querySelector('.f-title'), 0.3, 0.5); await sleep(3500);
+      const c = nth(1).querySelector('.cause'); if (c) { await moveTo(c, 0.25, 0.5); } await sleep(6000);   // vanishing + cause
+      beat(3); await scrollToEl(nth(2)); await moveTo(nth(2).querySelector('table'), 0.3, 0.3); await sleep(5000);
+      const more = nth(2).querySelector('.more'); if (more) { await moveTo(more); await click(); more.click(); } await sleep(5000);   // our blog posts
+      beat(4); await scrollToEl(nth(3)); await moveTo(nth(3).querySelector('.chips'), 0.3, 0.5); await sleep(6500);   // noindex
+      beat(5); await scrollToEl(nth(4)); await moveTo(nth(4).querySelector('.f-key'), 0.5, 0.4); await sleep(5500);   // compare slid
+      window.scrollTo({ top: 0 }); await sleep(1000);
+      beat(6); const lumen = document.querySelector('.acct.HIGH');
+      if (lumen) { await moveTo(lumen); await click(); sel(lumen.dataset.n); } await sleep(7500);   // other account
+      beat(7); const h = document.querySelector('.acct[disabled]'); if (h) await moveTo(h, 0.4, 0.5); await sleep(5500);   // 18 healthy
+      const crit = document.querySelector('.acct.CRITICAL'); await moveTo(crit); await click(); sel(crit.dataset.n);
+      beat(8); await toThumb(); await click(); await dragTo(30, 40, false); await sleep(5000);   // back to Sep 3
+      beat(9); await dragTo(35, 250, true); await click(); await sleep(6000);   // Sep 8 red
+      beat(10); await dragTo(42, 40, false); await sleep(5000);   // Sep 15
+      beat(11); await dragTo(49, 40, false); await sleep(6000);   // Sep 22
+      beat(12); await dragTo(63, 40, false); await click(); await sleep(7000);   // Oct 6
+      beat(13); cur.style.transform = 'translate(-200px, -200px)';
+    })();
+  }
 })();
 </script>
 </body>
