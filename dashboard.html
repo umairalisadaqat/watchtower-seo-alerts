@@ -8,124 +8,134 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: oklch(17% 0.012 60); --bg-2: oklch(21% 0.013 60); --panel: oklch(23.5% 0.014 60); --line: oklch(32% 0.014 60);
-    --text: oklch(94% 0.01 80); --text-2: oklch(76% 0.014 75); --text-3: oklch(60% 0.014 70);
-    --crit: oklch(66% 0.19 30); --crit-bg: oklch(30% 0.08 30); --crit-glow: oklch(66% 0.19 30 / .45);
-    --high: oklch(78% 0.14 75); --high-bg: oklch(31% 0.06 75);
-    --ok: oklch(72% 0.12 160); --ok-bg: oklch(27% 0.035 160);
+    --bg: oklch(17% 0.012 60); --bg-2: oklch(20.5% 0.013 60); --panel: oklch(23% 0.014 60); --hover: oklch(26% 0.015 60); --line: oklch(31% 0.014 60);
+    --text: oklch(94% 0.01 80); --text-2: oklch(78% 0.014 75); --text-3: oklch(62% 0.014 70);
+    --crit: oklch(67% 0.19 30); --crit-bg: oklch(29% 0.075 30); --crit-glow: oklch(67% 0.19 30 / .45);
+    --high: oklch(79% 0.14 75); --high-bg: oklch(30% 0.055 75);
+    --ok: oklch(73% 0.12 160);
     --serif: 'Newsreader', Georgia, serif; --sans: 'IBM Plex Sans', system-ui, sans-serif; --mono: 'IBM Plex Mono', ui-monospace, monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { background: var(--bg); }
-  body { min-height: 100vh; color: var(--text); font: 400 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased;
-    background: radial-gradient(1200px 500px at 20% -10%, oklch(24% 0.02 60), transparent 70%), var(--bg); }
-  .wrap { max-width: 1320px; margin: 0 auto; padding: 36px 36px 80px; }
+  body { min-height: 100vh; color: var(--text); font: 400 15px/1.5 var(--sans); -webkit-font-smoothing: antialiased;
+    background: radial-gradient(1100px 420px at 15% -10%, oklch(23.5% 0.02 60), transparent 70%), var(--bg); }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 26px 32px 48px; }
+  :focus-visible { outline: 2px solid var(--ok); outline-offset: 2px; }
 
-  /* top bar */
-  .top { display: flex; align-items: center; gap: 18px; }
-  .mark { width: 34px; height: 34px; color: var(--text); }
-  .brand { font: 500 28px/1 var(--serif); letter-spacing: -0.01em; }
-  .live { display: inline-flex; align-items: center; gap: 8px; margin-left: 6px; font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); }
-  .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 oklch(72% .12 160 / .6); animation: ping 2s infinite; }
-  @keyframes ping { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
-  .top .actions { margin-left: auto; display: flex; gap: 10px; }
-  button { font: 500 15px/1 var(--sans); color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 11px 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background .15s, border-color .15s, transform .1s; }
-  button:hover { background: oklch(27% 0.015 60); border-color: oklch(38% .015 60); }
-  button:active { transform: translateY(1px); }
+  /* top */
+  .top { display: flex; align-items: center; gap: 14px; }
+  .mark { width: 30px; height: 30px; }
+  .brand { font: 500 24px/1 var(--serif); }
+  .live { display: inline-flex; align-items: center; gap: 8px; font: 500 11.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); margin-left: 4px; }
+  .live i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); animation: ping 2s infinite; }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 oklch(73% .12 160 / .6); } 70%, 100% { box-shadow: 0 0 0 7px transparent; } }
+  .actions { margin-left: auto; display: flex; gap: 8px; }
+  button { font: 500 14px/1 var(--sans); color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background .15s, border-color .15s; }
+  button:hover { background: var(--hover); }
   button.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
-  button.primary:hover { background: oklch(86% 0.01 80); }
-  button svg { width: 16px; height: 16px; }
-  :focus-visible { outline: 2px solid var(--ok); outline-offset: 3px; }
+  button.primary:hover { background: oklch(86% .01 80); }
+  button svg { width: 15px; height: 15px; }
+  button.busy svg { animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* headline */
-  .hero { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: end; margin-top: 48px; }
-  .verdict { font: 400 64px/1.02 var(--serif); letter-spacing: -0.03em; text-wrap: balance; max-width: 18ch; transition: color .3s; }
+  /* headline + timeline */
+  .head { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end; margin-top: 30px; }
+  .verdict { font: 400 46px/1.05 var(--serif); letter-spacing: -0.025em; text-wrap: balance; }
   .verdict em { font-style: normal; color: var(--crit); }
-  .verdict.calm em { color: var(--ok); }
+  .verdict.warn em { color: var(--high); } .verdict.calm em { color: var(--ok); }
+  .counts { display: flex; gap: 22px; margin-top: 12px; color: var(--text-2); font-size: 14px; }
+  .counts span { display: inline-flex; align-items: center; gap: 8px; }
+  .counts b { font: 500 18px/1 var(--mono); color: var(--text); }
+  .dot { width: 9px; height: 9px; border-radius: 3px; }
   .date { text-align: right; }
-  .date .k { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
-  .date .v { font: 400 44px/1.05 var(--serif); margin-top: 8px; font-variant-numeric: tabular-nums; }
-  .counts { display: flex; gap: 26px; margin-top: 22px; font: 500 15px/1 var(--sans); color: var(--text-2); }
-  .counts span { display: inline-flex; align-items: center; gap: 9px; }
-  .counts b { font: 500 22px/1 var(--mono); color: var(--text); font-variant-numeric: tabular-nums; }
-  .dot { width: 10px; height: 10px; border-radius: 3px; }
+  .date .k { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+  .date .v { font: 400 36px/1.05 var(--serif); margin-top: 6px; font-variant-numeric: tabular-nums; }
 
-  /* timeline */
-  .timeline { margin-top: 34px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; padding: 22px 26px 16px; }
-  .tl-head { display: flex; justify-content: space-between; font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); }
-  .rail { position: relative; height: 92px; margin-top: 12px; }
-  .rail input { position: absolute; inset: 22px 0 auto; width: 100%; height: 28px; -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; z-index: 3; }
-  .rail input::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: transparent; }
-  .rail::before { content: ""; position: absolute; left: 0; right: 0; top: 34px; height: 4px; border-radius: 2px; background: var(--line); z-index: 1; }
-  .rail input::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: var(--text); border: 4px solid var(--bg-2); box-shadow: 0 0 0 1px var(--text-3), 0 4px 12px oklch(0% 0 0 / .4); }
-  .rail input::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--text); border: 4px solid var(--bg-2); }
-  .fill { position: absolute; left: 0; right: 0; top: 34px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--ok), var(--ok) var(--safe, 100%), var(--crit) var(--safe, 100%)); z-index: 2; pointer-events: none; transform-origin: left; transform: scaleX(var(--p, 1)); transition: transform .15s; }
-  .ev { position: absolute; top: 46px; transform: translateX(-50%); text-align: center; font: 500 11.5px/1.3 var(--mono); color: var(--text-3); white-space: nowrap; pointer-events: none; }
-  .ev::before { content: ""; display: block; width: 1px; height: 10px; margin: 0 auto 5px; background: currentColor; }
+  .timeline { margin-top: 20px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 22px 6px; }
+  .tl-head { display: flex; justify-content: space-between; font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); }
+  .rail { position: relative; height: 104px; margin-top: 6px; }
+  .rail::before { content: ""; position: absolute; left: 0; right: 0; top: 26px; height: 4px; border-radius: 2px; background: var(--line); }
+  .fill { position: absolute; left: 0; right: 0; top: 26px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--ok), var(--ok) var(--safe, 100%), var(--crit) var(--safe, 100%)); transform-origin: left; transform: scaleX(var(--p, 1)); transition: transform .15s; pointer-events: none; }
+  .rail input { position: absolute; left: 0; right: 0; top: 14px; width: 100%; height: 28px; -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; z-index: 3; }
+  .rail input::-webkit-slider-runnable-track { height: 4px; background: transparent; }
+  .rail input::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -8px; border-radius: 50%; background: var(--text); border: 4px solid var(--bg-2); box-shadow: 0 0 0 1px var(--text-3), 0 4px 10px oklch(0% 0 0 / .45); }
+  .rail input::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--text); border: 4px solid var(--bg-2); }
+  .ev { position: absolute; top: 37px; transform: translateX(-50%); text-align: center; font: 500 11px/1.3 var(--mono); color: var(--text-3); white-space: nowrap; pointer-events: none; }
+  .ev::before { content: ""; display: block; width: 1px; height: 8px; margin: 0 auto 4px; background: currentColor; }
   .ev.bad { color: var(--crit); }
-  .ev.first { color: var(--ok); top: -2px; }
+  .ev.low { top: 66px; }
+  .ev.low::before { height: 36px; margin-top: -28px; }
+  .ev.first { top: -4px; color: var(--ok); }
   .ev.first::before { display: none; }
-  .ev.first::after { content: ""; display: block; width: 1px; height: 12px; margin: 4px auto 0; background: currentColor; }
 
-  /* book of accounts */
-  .book-head { display: flex; justify-content: space-between; align-items: baseline; margin-top: 40px; }
-  .book-head h2 { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
-  .book-head p { color: var(--text-3); font-size: 14px; }
-  .book { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 14px; }
-  .tile { position: relative; text-align: left; padding: 14px 16px 15px; border-radius: 11px; background: var(--panel); border: 1px solid var(--line); min-height: 78px; display: block; transition: background .25s, border-color .25s, box-shadow .25s; }
-  .tile .nm { font: 500 15px/1.25 var(--sans); color: var(--text-2); }
-  .tile .st { margin-top: 8px; font: 500 11.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ok); display: flex; align-items: center; gap: 7px; }
-  .tile .st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-  .tile.HIGH { background: var(--high-bg); border-color: oklch(48% .1 75); }
-  .tile.HIGH .nm { color: var(--text); } .tile.HIGH .st { color: var(--high); }
-  .tile.CRITICAL { background: var(--crit-bg); border-color: var(--crit); box-shadow: 0 0 0 0 var(--crit-glow); animation: alarm 1.6s ease-out infinite; }
-  .tile.CRITICAL .nm { color: var(--text); } .tile.CRITICAL .st { color: var(--crit); }
-  @keyframes alarm { 0% { box-shadow: 0 0 0 0 var(--crit-glow); } 70% { box-shadow: 0 0 0 12px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
-  .tile.sel { outline: 2px solid var(--text); outline-offset: 2px; }
-  .tile[disabled] { cursor: default; }
-  .tile:not([disabled]):hover { border-color: var(--text-3); }
+  /* main split */
+  .main { display: grid; grid-template-columns: 300px 1fr; gap: 20px; margin-top: 20px; align-items: start; }
+  .book { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 8px; position: sticky; top: 16px; }
+  .book h2, .file-h { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+  .book h2 { padding: 10px 10px 10px; display: flex; justify-content: space-between; }
+  .acct { width: 100%; justify-content: flex-start; background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 8px 10px; gap: 10px; font: 400 14px/1.2 var(--sans); color: var(--text-2); }
+  .acct:hover { background: var(--panel); }
+  .acct .sd { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); opacity: .7; flex: none; }
+  .acct .tag { margin-left: auto; font: 500 10.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .acct.CRITICAL { color: var(--text); background: var(--crit-bg); }
+  .acct.CRITICAL .sd { background: var(--crit); opacity: 1; animation: alarm 1.6s ease-out infinite; }
+  .acct.CRITICAL .tag { color: var(--crit); }
+  .acct.HIGH { color: var(--text); background: var(--high-bg); }
+  .acct.HIGH .sd { background: var(--high); opacity: 1; } .acct.HIGH .tag { color: var(--high); }
+  @keyframes alarm { 0% { box-shadow: 0 0 0 0 var(--crit-glow); } 70%, 100% { box-shadow: 0 0 0 7px transparent; } }
+  .acct.sel { border-color: var(--text-3); }
+  .acct[disabled] { cursor: default; } .acct[disabled]:hover { background: transparent; }
+  .divider { height: 1px; background: var(--line); margin: 8px 10px; }
 
-  /* dossier */
-  .dossier { margin-top: 34px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; animation: rise .35s cubic-bezier(.16,1,.3,1) both; }
-  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
-  .d-head { display: flex; align-items: center; gap: 16px; padding: 22px 28px; border-bottom: 1px solid var(--line); }
-  .d-head h3 { font: 400 40px/1 var(--serif); letter-spacing: -0.02em; }
-  .d-head .n { margin-left: auto; font: 400 14px/1 var(--mono); color: var(--text-3); }
-  .sev { font: 600 11.5px/1 var(--mono); letter-spacing: .08em; padding: 7px 10px 6px; border-radius: 5px; }
+  .file { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; min-height: 420px; }
+  .file-top { display: flex; align-items: center; gap: 14px; padding: 18px 24px; border-bottom: 1px solid var(--line); }
+  .file-top h3 { font: 400 34px/1 var(--serif); letter-spacing: -0.02em; }
+  .file-top .n { margin-left: auto; font: 400 13px/1 var(--mono); color: var(--text-3); }
+  .sev { font: 600 11px/1 var(--mono); letter-spacing: .08em; padding: 6px 9px 5px; border-radius: 5px; }
   .sev.CRITICAL { background: var(--crit); color: oklch(16% .02 30); }
   .sev.HIGH { background: var(--high); color: oklch(18% .02 75); }
-  .sev.MEDIUM, .sev.LOW { background: var(--line); color: var(--text-2); }
-  .f { display: grid; grid-template-columns: 190px 1fr 170px; gap: 28px; padding: 22px 28px; border-bottom: 1px solid var(--line); }
-  .f:last-child { border-bottom: 0; }
-  .f .t { font: 600 15px/1.3 var(--sans); letter-spacing: .01em; }
-  .f .s { font: 400 13px/1.3 var(--mono); color: var(--text-3); margin-top: 5px; }
-  .f .since { margin-top: 10px; font: 400 13px/1.3 var(--mono); color: var(--text-3); }
-  .f .detail { color: var(--text-2); font-size: 15.5px; line-height: 1.55; overflow-wrap: anywhere; max-width: 70ch; }
-  .f .detail.clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .more { margin-top: 6px; background: none; border: 0; padding: 0; color: var(--text-3); font: 500 13px/1 var(--mono); text-decoration: underline; text-underline-offset: 3px; }
+
+  .finding { padding: 18px 24px 20px; border-bottom: 1px solid var(--line); animation: rise .35s cubic-bezier(.16,1,.3,1) both; }
+  .finding:last-child { border-bottom: 0; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+  .f-row { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; }
+  .f-title { font: 500 19px/1.3 var(--sans); display: flex; align-items: center; gap: 10px; }
+  .f-title i { width: 8px; height: 8px; border-radius: 50%; background: var(--crit); flex: none; }
+  .f-title i.HIGH { background: var(--high); }
+  .f-sub { margin-top: 5px; color: var(--text-3); font: 400 13px/1.4 var(--mono); }
+  .f-key { text-align: right; }
+  .f-key b { display: block; font: 400 30px/1 var(--serif); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .f-key small { font: 400 12px/1.3 var(--mono); color: var(--text-3); }
+  .f-body { margin-top: 12px; color: var(--text-2); max-width: 78ch; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .chip { font: 400 13px/1 var(--mono); padding: 7px 9px; border-radius: 6px; background: var(--panel); color: var(--text-2); }
+  .chip b { color: var(--text); font-weight: 500; }
+  .cause { margin-top: 12px; display: inline-flex; gap: 10px; align-items: baseline; font-size: 14px; color: var(--text); background: oklch(25% .03 75 / .6); border: 1px solid oklch(42% .08 75); border-radius: 8px; padding: 8px 12px; }
+  .cause span { font: 500 10.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--high); flex: none; }
+  .causes { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13.5px; }
+  th { text-align: left; font: 500 10.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); padding: 0 10px 8px 0; border-bottom: 1px solid var(--line); }
+  td { padding: 8px 10px 8px 0; border-bottom: 1px solid oklch(27% .013 60); color: var(--text-2); vertical-align: top; }
+  td.q { color: var(--text); }
+  td.u { font: 400 12.5px/1.35 var(--mono); }
+  td.u .now { color: var(--crit); }
+  td.n, th.n { text-align: right; white-space: nowrap; font-family: var(--mono); }
+  .more { margin-top: 8px; background: none; border: 0; padding: 4px 0; color: var(--text-3); font: 500 12.5px/1 var(--mono); text-decoration: underline; text-underline-offset: 3px; }
   .more:hover { background: none; color: var(--text); }
-  .cause { margin-top: 12px; display: flex; gap: 10px; align-items: baseline; font-size: 14.5px; color: var(--text); }
-  .cause span { flex: none; font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--high); border: 1px solid oklch(48% .1 75); border-radius: 4px; padding: 5px 7px 4px; }
-  .share { text-align: right; }
-  .share b { display: block; font: 400 36px/1 var(--serif); font-variant-numeric: tabular-nums; }
-  .share small { font: 400 12.5px/1 var(--mono); color: var(--text-3); }
-  .bar { height: 5px; border-radius: 3px; background: var(--line); margin-top: 12px; overflow: hidden; }
-  .bar i { display: block; height: 100%; border-radius: 3px; background: var(--crit); transform-origin: left; animation: grow .7s cubic-bezier(.16,1,.3,1) both .15s; }
-  .bar i.HIGH { background: var(--high); }
-  @keyframes grow { from { transform: scaleX(0); } }
+  .quiet { padding: 60px 32px; text-align: center; }
+  .quiet h3 { font: 400 32px/1.2 var(--serif); }
+  .quiet p { margin-top: 10px; color: var(--text-3); }
+  .err { margin: 20px; padding: 14px 18px; border-radius: 10px; background: var(--crit-bg); border: 1px solid var(--crit); }
 
-  .quiet { margin-top: 34px; padding: 34px 28px; border: 1px dashed var(--line); border-radius: 16px; color: var(--text-2); font: 400 26px/1.3 var(--serif); }
-  .err { margin-top: 24px; padding: 16px 20px; border-radius: 10px; background: var(--crit-bg); color: var(--text); border: 1px solid var(--crit); }
-
-  @media (max-width: 900px) {
-    .wrap { padding: 24px 16px 60px; }
-    .hero { grid-template-columns: 1fr; gap: 14px; } .date { text-align: left; }
-    .verdict { font-size: 40px; } .date .v { font-size: 30px; }
-    .book { grid-template-columns: repeat(2, 1fr); }
-    .f { grid-template-columns: 1fr; gap: 10px; } .share { text-align: left; }
-    .top .actions button span { display: none; }
-    .ev { display: none; } .ev.first { display: none; } .rail { height: 54px; }
-    .live, .tl-head span:nth-child(2) { display: none; }
+  @media (max-width: 960px) {
+    .wrap { padding: 20px 16px 48px; }
+    .head { grid-template-columns: 1fr; gap: 10px; } .date { text-align: left; }
+    .verdict { font-size: 34px; } .date .v { font-size: 26px; }
+    .main { grid-template-columns: 1fr; } .book { position: static; order: 2; }
+    .live, .actions button span, .tl-head span:nth-child(2), .ev { display: none; }
+    .rail { height: 44px; }
+    .f-row { grid-template-columns: 1fr; gap: 8px; } .f-key { text-align: left; }
+    td.u { display: none; } th.u { display: none; }
   }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
@@ -135,137 +145,147 @@
   <div class="top">
     <svg class="mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M10 29l3-17h6l3 17"/><path d="M11.5 20h9M12.4 15h7.2"/><path d="M9 12h14l-2-5H11z"/><path d="M16 7V3"/><path d="M5 5.5q-2 4 0 8M27 5.5q2 4 0 8" stroke-linecap="round"/></svg>
     <span class="brand">Watchtower</span>
-    <span class="live"><i></i>20 accounts · daily 7:00</span>
+    <span class="live"><i></i>20 accounts · runs daily 7:00</span>
     <div class="actions">
-      <button id="playBtn" aria-label="Replay September to October"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Replay Sep 1 → Oct 12</span></button>
+      <button id="playBtn"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Replay Sep 1 → Oct 12</span></button>
       <button class="primary" id="runBtn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg><span>Run morning check</span></button>
     </div>
   </div>
 
-  <section class="hero">
-    <div>
-      <h1 class="verdict" id="verdict">Checking the book…</h1>
-      <div class="counts" id="counts"></div>
-    </div>
+  <section class="head">
+    <div><h1 class="verdict" id="verdict">Checking all 20 accounts…</h1><div class="counts" id="counts"></div></div>
     <div class="date"><div class="k">Morning of</div><div class="v" id="dateLabel">Oct 12, 2026</div></div>
   </section>
 
   <section class="timeline" aria-label="Pick a morning to replay">
     <div class="tl-head"><span>Aug 4</span><span>Drag to replay any morning</span><span>Oct 12</span></div>
-    <div class="rail" id="rail">
-      <div class="fill" id="fill"></div>
-      <input type="range" id="day" min="0" max="69" value="69" aria-label="Morning to check">
-    </div>
+    <div class="rail" id="rail"><div class="fill" id="fill"></div><input type="range" id="day" min="0" max="69" value="69" aria-label="Morning to check"></div>
   </section>
 
-  <div class="book-head"><h2>The book</h2><p id="bookHint">Click an account to open its file</p></div>
-  <section class="book" id="book" aria-label="All accounts"></section>
-
-  <div id="out" aria-live="polite"></div>
+  <div class="main">
+    <nav class="book" aria-label="Accounts"><h2><span>Accounts</span><span id="bookCount">20</span></h2><div id="book"></div></nav>
+    <section class="file" id="file" aria-live="polite"></section>
+  </div>
 </div>
 
 <script>
 (() => {
-  const START = Date.UTC(2026, 7, 4), DAYS = 69;
+  const START = Date.UTC(2026, 7, 4), DAYS = 69, FIRST_ALERT = '2026-09-08';
   const EVENTS = [
-    { d: '2026-09-08', t: 'Redesign live', bad: true },
-    { d: '2026-09-15', t: 'Google update' },
-    { d: '2026-09-22', t: 'Blog sprint', bad: true },
-    { d: '2026-10-06', t: 'Dana complains', bad: true },
+    { d: '2026-09-08', t: 'Redesign live', bad: true }, { d: '2026-09-15', t: 'Google update' },
+    { d: '2026-09-22', t: 'Blog sprint', bad: true }, { d: '2026-10-06', t: 'Client complains', bad: true },
   ];
-  const FIRST_ALERT = '2026-09-08';
   const $ = (id) => document.getElementById(id);
   const slider = $('day');
   const iso = (i) => new Date(START + i * 864e5).toISOString().slice(0, 10);
   const idx = (d) => (Date.parse(d + 'T00:00:00Z') - START) / 864e5;
+  const pct = (i) => (i / DAYS) * 100;
   const nice = (s, y = true) => new Date(s + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', ...(y ? { year: 'numeric' } : {}), timeZone: 'UTC' });
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const arrows = (s) => esc(s).replace(/-&gt;/g, '→');
   const pretty = (n) => n.replace(/^Demo-/, '').replace(/-/g, ' ');
   const rank = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
-  const pct = (i) => (i / DAYS) * 100;
 
-  const rail = $('rail');
-  rail.insertAdjacentHTML('beforeend',
-    EVENTS.map((e) => `<div class="ev ${e.bad ? 'bad' : ''}" style="left:${pct(idx(e.d))}%">${e.t}<br>${nice(e.d, false)}</div>`).join('') +
+  $('rail').insertAdjacentHTML('beforeend',
+    EVENTS.map((e, i) => `<div class="ev ${e.bad ? 'bad' : ''} ${i % 2 ? 'low' : ''}" style="left:${pct(idx(e.d))}%">${e.t}<br>${nice(e.d, false)}</div>`).join('') +
     `<div class="ev first" style="left:${pct(idx(FIRST_ALERT))}%">Watchtower fires</div>`);
-  rail.style.setProperty('--safe', '100%');
-
-  let state = { data: null, selected: null }, busy = false, playing = false;
-
-  function syncRail() {
-    const v = +slider.value;
-    const firstPct = pct(idx(FIRST_ALERT));
+  function setFill(v) {
     $('fill').style.setProperty('--p', v / DAYS);
-    $('fill').style.setProperty('--safe', v >= idx(FIRST_ALERT) ? firstPct + '%' : '100%');
-    $('dateLabel').textContent = nice(iso(v));
+    $('fill').style.setProperty('--safe', v > idx(FIRST_ALERT) ? (idx(FIRST_ALERT) / v) * 100 + '%' : '100%');
   }
 
-  function sortedFlagged(accounts) {
-    return Object.entries(accounts).filter(([, f]) => f.length)
-      .map(([n, f]) => [n, [...f].sort((a, b) => rank[a.severity] - rank[b.severity] || b.lead_share - a.lead_share)])
-      .sort((a, b) => rank[a[1][0].severity] - rank[b[1][0].severity] || b[1].length - a[1].length);
+  /* Turn each check's raw output into a plain-English card. */
+  function describe(f) {
+    const d = f.detail;
+    let m;
+    if (f.type === 'LEAD DROP' && (m = d.match(/(\d+) vs (\d+)\/week normal \((-?\d+%)\)/))) {
+      const losses = [...d.matchAll(/(\w+) (\d+)->(\d+)/g)];
+      return { title: 'Demo requests collapsed', key: m[3], keyLbl: `${m[1]} a week, normally ${m[2]}`,
+        body: '', extra: `<div class="chips">${losses.map((l) => `<span class="chip">${esc(l[1])} <b>${l[2]} → ${l[3]}</b></span>`).join('')}</div>` };
+    }
+    if (f.type === 'INDEX LOSS' && (m = d.match(/^(\w+): impressions ([\d,]+)\/day -> ([\d,]+)\/day \((-?\d+%)\), clicks ([\d,]+) -> ([\d,]+)/))) {
+      return { title: `${m[1]} pages are vanishing from Google`, key: m[4], keyLbl: 'times shown in Google',
+        body: `Shown ${m[2]} times a day, now ${m[3]}. Clicks ${m[5]} → ${m[6]}. Google is hiding these pages, not just ranking them lower.`,
+        extra: `<div class="chips"><span class="chip">Check first: noindex, robots, canonicals, redirects</span></div>` };
+    }
+    if (f.type === 'NOINDEX MONEY' && (m = d.match(/^(\d+) (\w+) pages.*?: (.*)$/))) {
+      const urls = m[3].replace(/\.\.\.$/, '').split(', ');
+      const rest = +m[1] - urls.length;
+      return { title: `${m[1]} ${m[2]} pages tell Google to hide them`, key: m[1], keyLbl: 'pages with noindex',
+        body: 'These pages earn traffic but carry a noindex tag.',
+        extra: `<div class="chips">${urls.map((u) => `<span class="chip">${esc(u)}</span>`).join('')}${rest > 0 ? `<span class="chip">+${rest} more</span>` : ''}</div>` };
+    }
+    if (f.type === 'URL SWAP' && (m = d.match(/^(\d+) money queries now rank a blog post instead of the (\w+) page/))) {
+      const rows = [...d.matchAll(/"([^"]+)": (\S+) -> (\S+) \(clicks\/wk (\d+) -> (\d+)\)/g)];
+      const id = 'sw' + Math.random().toString(36).slice(2, 7);
+      return { title: `Blog posts took over the ${m[2]} searches`, key: m[1], keyLbl: 'money searches swapped',
+        body: `Google now shows one of our blog posts instead of the ${m[2]} page.`,
+        extra: `<table id="${id}"><thead><tr><th>Search</th><th class="u">Was → now showing</th><th class="n">Clicks/wk</th></tr></thead><tbody>${
+          rows.map((r, k) => `<tr ${k > 3 ? 'hidden' : ''}><td class="q">${esc(r[1])}</td><td class="u">${esc(r[2])}<br><span class="now">→ ${esc(r[3])}</span></td><td class="n">${r[4]} → ${r[5]}</td></tr>`).join('')
+        }</tbody></table>${rows.length > 4 ? `<button class="more" data-t="${id}">Show all ${rows.length}</button>` : ''}` };
+    }
+    if (f.type === 'RANK SLIDE' && (m = d.match(/^(\w+): average position ([\d.]+) -> ([\d.]+) while impressions held \(([+-]?\d+%)\); clicks ([\d,]+) -> ([\d,]+)\/day/))) {
+      return { title: `${m[1]} pages slid down Google`, key: `${m[2]} → ${m[3]}`, keyLbl: 'average position',
+        body: `Still shown as often (${m[4]}), but lower. Clicks ${m[5]} → ${m[6]} a day. Another page is probably taking these searches.`, extra: '' };
+    }
+    return { title: f.type, key: '', keyLbl: '', body: arrows(d), extra: '' };
   }
+
+  let state = { data: null, sel: null }, busy = false, playing = false;
 
   function render() {
-    const accounts = state.data.accounts;
-    const flagged = sortedFlagged(accounts);
-    const worst = Object.fromEntries(flagged.map(([n, f]) => [n, f[0].severity]));
-    const crit = flagged.filter(([, f]) => f[0].severity === 'CRITICAL').length;
-    const warn = flagged.length - crit;
-    const healthy = Object.keys(accounts).length - flagged.length;
+    const accts = state.data.accounts;
+    const flagged = Object.entries(accts).filter(([, f]) => f.length)
+      .map(([n, f]) => [n, [...f].sort((a, b) => rank[a.severity] - rank[b.severity] || b.lead_share - a.lead_share)])
+      .sort((a, b) => rank[a[1][0].severity] - rank[b[1][0].severity] || b[1].length - a[1].length);
+    const healthy = Object.keys(accts).filter((n) => !accts[n].length);
+    const crit = flagged.filter(([, f]) => f[0].severity === 'CRITICAL').length, warn = flagged.length - crit;
 
     const v = $('verdict');
     if (crit) { v.className = 'verdict'; v.innerHTML = `<em>${esc(pretty(flagged[0][0]))}</em> needs you this morning.`; }
-    else if (warn) { v.className = 'verdict'; v.innerHTML = `One to watch. <em>${esc(pretty(flagged[0][0]))}</em> is slipping.`; }
+    else if (warn) { v.className = 'verdict warn'; v.innerHTML = `Nothing urgent. Keep an eye on <em>${esc(pretty(flagged[0][0]))}</em>.`; }
     else { v.className = 'verdict calm'; v.innerHTML = `All quiet. <em>Nothing</em> to chase today.`; }
+    $('counts').innerHTML = `<span><i class="dot" style="background:var(--crit)"></i><b>${crit}</b> critical</span><span><i class="dot" style="background:var(--high)"></i><b>${warn}</b> to watch</span><span><i class="dot" style="background:var(--ok)"></i><b>${healthy.length}</b> healthy</span>`;
 
-    $('counts').innerHTML =
-      `<span><i class="dot" style="background:var(--crit)"></i><b>${crit}</b> critical</span>` +
-      `<span><i class="dot" style="background:var(--high)"></i><b>${warn}</b> watch</span>` +
-      `<span><i class="dot" style="background:var(--ok)"></i><b>${healthy}</b> healthy</span>`;
+    if (!state.sel || !accts[state.sel] || !accts[state.sel].length) state.sel = flagged.length ? flagged[0][0] : null;
+    const row = (n, s) => `<button class="acct ${s || ''} ${n === state.sel ? 'sel' : ''}" data-n="${esc(n)}" ${s ? '' : 'disabled'}><span class="sd"></span>${esc(pretty(n))}${s ? `<span class="tag">${s === 'CRITICAL' ? 'Critical' : 'Watch'}</span>` : ''}</button>`;
+    $('book').innerHTML = flagged.map(([n, f]) => row(n, f[0].severity)).join('') + (flagged.length ? '<div class="divider"></div>' : '') + healthy.map((n) => row(n)).join('');
 
-    if (!state.selected || !accounts[state.selected] || !accounts[state.selected].length) state.selected = flagged.length ? flagged[0][0] : null;
-
-    const order = [...flagged.map(([n]) => n), ...Object.keys(accounts).filter((n) => !accounts[n].length)];
-    $('book').innerHTML = order.map((n) => {
-      const s = worst[n];
-      return `<button class="tile ${s || ''} ${n === state.selected ? 'sel' : ''}" data-n="${esc(n)}" ${s ? '' : 'disabled'} aria-label="${esc(pretty(n))}: ${s ? s.toLowerCase() : 'healthy'}">
-        <div class="nm">${esc(pretty(n))}</div><div class="st">${s ? (s === 'CRITICAL' ? 'Critical' : 'Watch') : 'Healthy'}</div></button>`;
-    }).join('');
-    $('bookHint').textContent = flagged.length ? 'Click an account to open its file' : '';
-
-    if (!state.selected) { $('out').innerHTML = `<div class="quiet">Every account is behaving like its own normal. Nobody gets paged.</div>`; return; }
-    const fs = flagged.find(([n]) => n === state.selected)[1];
-    $('out').innerHTML = `
-      <article class="dossier">
-        <div class="d-head"><span class="sev ${fs[0].severity}">${fs[0].severity}</span><h3>${esc(pretty(state.selected))}</h3><span class="n">${fs.length} finding${fs.length > 1 ? 's' : ''}, worst first</span></div>
-        ${fs.map((f, k) => `
-          <div class="f">
-            <div><div class="t">${esc(f.type)}</div><div class="s">${esc(f.section)}</div>${f.started ? `<div class="since">since ${esc(nice(f.started, false))}</div>` : ''}</div>
-            <div>
-              <div class="detail ${f.detail.length > 260 ? 'clamp' : ''}" id="d${k}">${esc(f.detail)}</div>
-              ${f.detail.length > 260 ? `<button class="more" data-k="${k}">Show all</button>` : ''}
-              ${(f.likely_causes || []).map((c) => `<div class="cause"><span>Likely cause</span>${esc(c.replace(/^\d{4}-(\d{2})-(\d{2}) /, (m, mo, da) => nice(`2026-${mo}-${da}`, false) + ' · '))}</div>`).join('')}
-            </div>
-            <div class="share"><b>${Math.round(f.lead_share * 100)}%</b><small>of leads at risk</small><div class="bar"><i class="${f.severity}" style="width:${Math.max(4, f.lead_share * 100)}%"></i></div></div>
-          </div>`).join('')}
-      </article>`;
+    if (!state.sel) {
+      $('file').innerHTML = `<div class="quiet"><h3>Every account looks like its normal self.</h3><p>Nobody gets paged this morning.</p></div>`;
+      return;
+    }
+    const fs = flagged.find(([n]) => n === state.sel)[1];
+    $('file').innerHTML = `
+      <div class="file-top"><span class="sev ${fs[0].severity}">${fs[0].severity}</span><h3>${esc(pretty(state.sel))}</h3><span class="n">${fs.length} problem${fs.length > 1 ? 's' : ''}, biggest first</span></div>
+      ${fs.map((f, k) => { const c = describe(f); return `
+        <div class="finding" style="animation-delay:${k * 50}ms">
+          <div class="f-row">
+            <div><div class="f-title"><i class="${f.severity}"></i>${esc(c.title)}</div>
+              <div class="f-sub">${f.section === 'All' ? 'All organic leads' : Math.round(f.lead_share * 100) + '% of this client\'s leads come from ' + esc(f.section)}${f.started ? ` · since ${esc(nice(f.started, false))}` : ''}</div></div>
+            ${c.key ? `<div class="f-key"><b>${esc(c.key)}</b><small>${esc(c.keyLbl)}</small></div>` : ''}
+          </div>
+          ${c.body ? `<p class="f-body">${c.body}</p>` : ''}
+          ${c.extra}
+          ${(f.likely_causes || []).length ? `<div class="causes" style="margin-top:12px">${f.likely_causes.map((x) => `<div class="cause" style="margin-top:0"><span>Likely cause</span>${esc(x.replace(/^2026-(\d{2})-(\d{2}) /, (m, mo, da) => nice(`2026-${mo}-${da}`, false) + ' · '))}</div>`).join('')}</div>` : ''}
+        </div>`; }).join('')}`;
   }
 
   async function run() {
     if (busy) return;
-    busy = true;
-    syncRail();
+    busy = true; $('runBtn').classList.add('busy');
+    const v = +slider.value;
+    setFill(v);
+    $('dateLabel').textContent = nice(iso(v));
     try {
-      const r = await fetch('/api/run?as_of=' + iso(+slider.value));
+      const r = await fetch('/api/run?as_of=' + iso(v));
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || 'Check failed');
-      state.data = data;
-      render();
+      state.data = data; render();
     } catch (e) {
-      $('out').innerHTML = `<div class="err">Couldn't run the check: ${esc(e.message)}. Is server.py still running?</div>`;
+      $('file').innerHTML = `<div class="err">Couldn't run the check: ${esc(e.message)}. Is server.py still running?</div>`;
       playing = false;
-    } finally { busy = false; }
+    } finally { busy = false; $('runBtn').classList.remove('busy'); }
   }
 
   async function play() {
@@ -273,26 +293,20 @@
     $('playBtn').querySelector('span').textContent = playing ? 'Pause' : 'Replay Sep 1 → Oct 12';
     if (!playing) return;
     if (+slider.value >= DAYS) slider.value = 28;
-    while (playing) {
-      await run();
-      if (+slider.value >= DAYS) break;
-      slider.value = +slider.value + 1;
-    }
+    while (playing) { await run(); if (+slider.value >= DAYS) break; slider.value = +slider.value + 1; }
     playing = false;
     $('playBtn').querySelector('span').textContent = 'Replay Sep 1 → Oct 12';
   }
 
-  $('book').addEventListener('click', (e) => {
-    const t = e.target.closest('.tile');
-    if (!t || t.disabled) return;
-    state.selected = t.dataset.n; render();
-  });
-  $('out').addEventListener('click', (e) => {
+  $('book').addEventListener('click', (e) => { const b = e.target.closest('.acct'); if (b && !b.disabled) { state.sel = b.dataset.n; render(); } });
+  $('file').addEventListener('click', (e) => {
     const b = e.target.closest('.more'); if (!b) return;
-    $('d' + b.dataset.k).classList.toggle('clamp');
-    b.textContent = b.textContent === 'Show all' ? 'Show less' : 'Show all';
+    const rows = document.querySelectorAll('#' + b.dataset.t + ' tbody tr');
+    const showing = b.textContent.startsWith('Show all');
+    rows.forEach((r, k) => { if (k > 3) r.hidden = !showing; });
+    b.textContent = showing ? 'Show fewer' : `Show all ${rows.length}`;
   });
-  slider.addEventListener('input', syncRail);
+  slider.addEventListener('input', () => { setFill(+slider.value); $('dateLabel').textContent = nice(iso(+slider.value)); });
   slider.addEventListener('change', run);
   $('runBtn').addEventListener('click', run);
   $('playBtn').addEventListener('click', play);
