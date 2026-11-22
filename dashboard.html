@@ -349,32 +349,35 @@
       if (!runEach) await run();
     }
     const beat = (k) => { try { window.parent.postMessage({ watchtowerBeat: k }, '*'); } catch (e) {} };
+    let doneBeat = -1;
+    let hasPrompter = false;
+    addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.prompter === true) hasPrompter = true;
+      if (typeof e.data.beatDone === 'number') { hasPrompter = true; doneBeat = Math.max(doneBeat, e.data.beatDone); }
+    });
+    const waitDone = async (k, fallback) => { const t0 = Date.now(); while (doneBeat < k && Date.now() - t0 < (hasPrompter ? 60000 : fallback)) await sleep(150); await sleep(400); };
     const sel = (name) => { state.sel = name; render(); };
     const scrollToEl = async (el, off = 150) => { window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - off }); await sleep(1000); };
     const nth = (k) => document.querySelectorAll('.finding')[k];
-    const say = async (k, ms) => { beat(k); await sleep(ms); };
+    const STEPS = [
+      [0, async () => {}, 7000],
+      [1, async () => { await moveTo(document.querySelector('.acct.CRITICAL')); await click(); await moveTo(nth(0).querySelector('.f-key'), 0.5, 0.4); }, 8000],
+      [2, async () => { await moveTo(nth(1).querySelector('.f-title'), 0.3, 0.5); const c = nth(1).querySelector('.cause'); if (c) await moveTo(c, 0.25, 0.5); }, 9000],
+      [3, async () => { await scrollToEl(nth(2)); await moveTo(nth(2).querySelector('table'), 0.3, 0.3); const m = nth(2).querySelector('.more'); if (m) { await moveTo(m); await click(); m.click(); } }, 10000],
+      [4, async () => { await scrollToEl(nth(3)); await moveTo(nth(3).querySelector('.chips'), 0.3, 0.5); }, 6500],
+      [5, async () => { await scrollToEl(nth(4)); await moveTo(nth(4).querySelector('.f-key'), 0.5, 0.4); }, 5500],
+      [6, async () => { window.scrollTo({ top: 0 }); await sleep(900); const l = document.querySelector('.acct.HIGH'); if (l) { await moveTo(l); await click(); sel(l.dataset.n); } }, 7500],
+      [7, async () => { const h = document.querySelector('.acct[disabled]'); if (h) await moveTo(h, 0.4, 0.5); }, 5500],
+      [8, async () => { const c = document.querySelector('.acct.CRITICAL'); await moveTo(c); await click(); sel(c.dataset.n); await toThumb(); await click(); await dragTo(30, 40, false); }, 5000],
+      [9, async () => { await dragTo(35, 250, true); await click(); }, 6000],
+      [10, async () => { await dragTo(42, 40, false); }, 5000],
+      [11, async () => { await dragTo(49, 40, false); }, 6000],
+      [12, async () => { await dragTo(63, 40, false); await click(); }, 7000],
+    ];
     (async () => {
       while (!state.data) await sleep(100);
-      await say(0, 7000);                                                   // morning view
-      await moveTo(document.querySelector('.acct.CRITICAL')); await click();
-      await say(1, 300);
-      await moveTo(nth(0).querySelector('.f-key'), 0.5, 0.4); await sleep(8000);   // demos -83%
-      beat(2); await moveTo(nth(1).querySelector('.f-title'), 0.3, 0.5); await sleep(3500);
-      const c = nth(1).querySelector('.cause'); if (c) { await moveTo(c, 0.25, 0.5); } await sleep(6000);   // vanishing + cause
-      beat(3); await scrollToEl(nth(2)); await moveTo(nth(2).querySelector('table'), 0.3, 0.3); await sleep(5000);
-      const more = nth(2).querySelector('.more'); if (more) { await moveTo(more); await click(); more.click(); } await sleep(5000);   // our blog posts
-      beat(4); await scrollToEl(nth(3)); await moveTo(nth(3).querySelector('.chips'), 0.3, 0.5); await sleep(6500);   // noindex
-      beat(5); await scrollToEl(nth(4)); await moveTo(nth(4).querySelector('.f-key'), 0.5, 0.4); await sleep(5500);   // compare slid
-      window.scrollTo({ top: 0 }); await sleep(1000);
-      beat(6); const lumen = document.querySelector('.acct.HIGH');
-      if (lumen) { await moveTo(lumen); await click(); sel(lumen.dataset.n); } await sleep(7500);   // other account
-      beat(7); const h = document.querySelector('.acct[disabled]'); if (h) await moveTo(h, 0.4, 0.5); await sleep(5500);   // 18 healthy
-      const crit = document.querySelector('.acct.CRITICAL'); await moveTo(crit); await click(); sel(crit.dataset.n);
-      beat(8); await toThumb(); await click(); await dragTo(30, 40, false); await sleep(5000);   // back to Sep 3
-      beat(9); await dragTo(35, 250, true); await click(); await sleep(6000);   // Sep 8 red
-      beat(10); await dragTo(42, 40, false); await sleep(5000);   // Sep 15
-      beat(11); await dragTo(49, 40, false); await sleep(6000);   // Sep 22
-      beat(12); await dragTo(63, 40, false); await click(); await sleep(7000);   // Oct 6
+      for (const [k, act, fallback] of STEPS) { beat(k); await act(); await waitDone(k, fallback); }
       beat(13); cur.style.transform = 'translate(-200px, -200px)';
     })();
   }
