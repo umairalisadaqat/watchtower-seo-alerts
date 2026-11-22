@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watchtower</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: oklch(97.5% 0.008 85); --paper-2: oklch(94.5% 0.012 85); --card: oklch(99% 0.004 85);
+    --ink: oklch(22% 0.015 60); --ink-2: oklch(42% 0.015 60); --ink-3: oklch(56% 0.012 60); --rule: oklch(88% 0.012 80);
+    --crit: oklch(55% 0.17 32); --crit-soft: oklch(94% 0.035 32);
+    --high: oklch(62% 0.13 60); --high-soft: oklch(95% 0.04 75);
+    --ok: oklch(50% 0.11 160); --ok-soft: oklch(94% 0.03 160);
+    --serif: 'Newsreader', Georgia, serif; --sans: 'IBM Plex Sans', system-ui, sans-serif; --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--ink); font: 400 17px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 32px 80px; }
+  header { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+  h1 { font: 500 52px/1 var(--serif); letter-spacing: -0.025em; }
+  .sub { color: var(--ink-2); margin-top: 10px; max-width: 60ch; }
+  .morning { text-align: right; }
+  .morning .lbl { font: 500 13px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .morning .d { font: 500 40px/1.1 var(--serif); margin-top: 6px; font-variant-numeric: tabular-nums; }
+
+  .controls { margin-top: 32px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 22px 26px 18px; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  button { font: 500 16px/1 var(--sans); border-radius: 8px; padding: 12px 18px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); transition: background .15s, transform .1s; }
+  button:hover { background: var(--paper-2); }
+  button:active { transform: translateY(1px); }
+  button.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  button.primary:hover { background: oklch(32% 0.015 60); }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--ok); outline-offset: 2px; }
+  button[disabled] { opacity: .5; cursor: default; }
+  .status { margin-left: auto; font: 400 15px/1 var(--mono); color: var(--ink-3); }
+
+  .track { position: relative; margin-top: 22px; padding-bottom: 34px; }
+  input[type=range] { width: 100%; accent-color: var(--ink); height: 28px; }
+  .events { position: absolute; left: 0; right: 0; top: 30px; height: 30px; }
+  .ev { position: absolute; transform: translateX(-50%); font: 500 12px/1.2 var(--mono); color: var(--ink-3); text-align: center; white-space: nowrap; }
+  .ev::before { content: ""; display: block; width: 1.5px; height: 8px; background: currentColor; margin: 0 auto 4px; }
+  .ev.bad { color: var(--crit); }
+
+  .summary { margin-top: 30px; display: flex; gap: 28px; align-items: baseline; flex-wrap: wrap; font: 500 20px/1.3 var(--sans); }
+  .summary b { font: 500 34px/1 var(--serif); margin-right: 6px; font-variant-numeric: tabular-nums; }
+  .summary .c b { color: var(--crit); } .summary .h b { color: var(--high); } .summary .o b { color: var(--ok); }
+
+  .acct { margin-top: 18px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; animation: rise .35s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+  .acct-head { display: flex; align-items: center; gap: 14px; padding: 18px 24px; border-bottom: 1px solid var(--rule); }
+  .acct-head h2 { font: 500 28px/1.1 var(--serif); letter-spacing: -0.01em; }
+  .acct-head .n { margin-left: auto; color: var(--ink-3); font: 400 15px/1 var(--mono); }
+  .sev { font: 600 12px/1 var(--mono); letter-spacing: .06em; padding: 7px 10px 6px; border-radius: 5px; }
+  .sev.CRITICAL { background: var(--crit-soft); color: var(--crit); }
+  .sev.HIGH { background: var(--high-soft); color: oklch(45% .12 60); }
+  .sev.MEDIUM { background: var(--paper-2); color: var(--ink-2); }
+
+  .finding { display: grid; grid-template-columns: 150px 1fr 150px; gap: 20px; padding: 18px 24px; border-bottom: 1px solid var(--rule); }
+  .finding:last-child { border-bottom: 0; }
+  .finding .type { font: 600 15px/1.3 var(--sans); }
+  .finding .sec { font: 400 14px/1.3 var(--mono); color: var(--ink-3); margin-top: 4px; }
+  .finding .detail { color: var(--ink-2); font-size: 16px; overflow-wrap: anywhere; }
+  .finding .cause { margin-top: 10px; font-size: 15px; color: var(--ink); background: var(--paper-2); border-radius: 6px; padding: 8px 12px; }
+  .finding .cause span { font: 500 12px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 4px; }
+  .finding .meta { text-align: right; font: 400 14px/1.5 var(--mono); color: var(--ink-3); }
+  .finding .meta strong { display: block; font: 500 22px/1.1 var(--serif); color: var(--ink); }
+
+  .healthy { margin-top: 26px; }
+  .healthy h3 { font: 500 13px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font: 400 14px/1 var(--sans); padding: 8px 12px; border-radius: 999px; background: var(--ok-soft); color: oklch(38% .09 160); }
+  .err { margin-top: 24px; padding: 16px 20px; border-radius: 10px; background: var(--crit-soft); color: var(--crit); }
+  .empty { margin-top: 24px; color: var(--ink-3); }
+  @media (max-width: 760px) {
+    .finding { grid-template-columns: 1fr; gap: 8px; } .finding .meta { text-align: left; }
+    .morning { text-align: left; } h1 { font-size: 40px; }
+    .events { display: none; } .track { padding-bottom: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Watchtower</h1>
+      <p class="sub">The morning SEO check across all 20 accounts. Ranked by how many leads each problem puts at risk.</p>
+    </div>
+    <div class="morning"><div class="lbl">Morning of</div><div class="d" id="dateLabel">Oct 12, 2026</div></div>
+  </header>
+
+  <section class="controls" aria-label="Replay controls">
+    <div class="row">
+      <button class="primary" id="runBtn">Run morning check</button>
+      <button id="playBtn">Replay Sep 1 → Oct 12</button>
+      <button id="latestBtn">Jump to latest</button>
+      <span class="status" id="status" role="status" aria-live="polite"></span>
+    </div>
+    <div class="track">
+      <input type="range" id="day" min="0" max="69" value="69" aria-label="Which morning to check">
+      <div class="events" id="events"></div>
+    </div>
+  </section>
+
+  <div id="out"></div>
+</div>
+
+<script>
+(() => {
+  const START = Date.UTC(2026, 7, 4);
+  const DAYS = 69;
+  const EVENTS = [
+    { d: '2026-09-08', t: 'Redesign live', bad: true },
+    { d: '2026-09-15', t: 'Google update' },
+    { d: '2026-09-22', t: 'Blog sprint', bad: true },
+    { d: '2026-10-06', t: 'Dana complains', bad: true },
+  ];
+  const $ = (id) => document.getElementById(id);
+  const slider = $('day'), out = $('out'), status = $('status');
+  const iso = (i) => new Date(START + i * 864e5).toISOString().slice(0, 10);
+  const nice = (s) => new Date(s + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const rank = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+
+  $('events').innerHTML = EVENTS.map((e) => {
+    const i = (Date.parse(e.d + 'T00:00:00Z') - START) / 864e5;
+    return `<div class="ev ${e.bad ? 'bad' : ''}" style="left:${(i / DAYS) * 100}%">${e.t}<br>${nice(e.d).replace(', 2026', '')}</div>`;
+  }).join('');
+
+  let playing = false, busy = false;
+
+  function render(data) {
+    const accts = Object.entries(data.accounts);
+    const flagged = accts.filter(([, f]) => f.length)
+      .map(([n, f]) => [n, [...f].sort((a, b) => rank[a.severity] - rank[b.severity] || b.lead_share - a.lead_share)])
+      .sort((a, b) => rank[a[1][0].severity] - rank[b[1][0].severity] || b[1].length - a[1].length);
+    const healthy = accts.filter(([, f]) => !f.length).map(([n]) => n);
+    const crit = flagged.filter(([, f]) => f[0].severity === 'CRITICAL').length;
+    const high = flagged.length - crit;
+    const pretty = (n) => n.replace(/^Demo-/, '').replace(/-/g, ' ');
+
+    out.innerHTML = `
+      <div class="summary"><span class="c"><b>${crit}</b>critical</span><span class="h"><b>${high}</b>needs a look</span><span class="o"><b>${healthy.length}</b>healthy</span></div>
+      ${flagged.map(([name, fs]) => `
+        <article class="acct">
+          <div class="acct-head"><span class="sev ${fs[0].severity}">${fs[0].severity}</span><h2>${esc(pretty(name))}</h2><span class="n">${fs.length} issue${fs.length > 1 ? 's' : ''}</span></div>
+          ${fs.map((f) => `
+            <div class="finding">
+              <div><div class="type">${esc(f.type)}</div><div class="sec">${esc(f.section)}</div></div>
+              <div><div class="detail">${esc(f.detail)}</div>
+                ${(f.likely_causes || []).map((c) => `<div class="cause"><span>Possible cause</span>${esc(c)}</div>`).join('')}</div>
+              <div class="meta"><strong>${Math.round(f.lead_share * 100)}%</strong>of leads${f.started ? `<br>since ${esc(nice(f.started).replace(', 2026', ''))}` : ''}</div>
+            </div>`).join('')}
+        </article>`).join('')}
+      ${flagged.length ? '' : '<p class="empty">No problems found on this morning.</p>'}
+      <div class="healthy"><h3>Healthy</h3><div class="chips">${healthy.map((n) => `<span class="chip">${esc(pretty(n))}</span>`).join('')}</div></div>`;
+  }
+
+  async function run() {
+    if (busy) return;
+    busy = true;
+    const d = iso(+slider.value);
+    $('dateLabel').textContent = nice(d);
+    status.textContent = 'Checking 20 accounts…';
+    try {
+      const r = await fetch('/api/run?as_of=' + d);
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'Check failed');
+      render(data);
+      status.textContent = `Checked ${Object.keys(data.accounts).length} accounts`;
+    } catch (e) {
+      out.innerHTML = `<div class="err">Couldn't run the check: ${esc(e.message)}. Is server.py still running?</div>`;
+      status.textContent = '';
+      playing = false;
+    } finally { busy = false; }
+  }
+
+  async function play() {
+    playing = !playing;
+    $('playBtn').textContent = playing ? 'Pause' : 'Replay Sep 1 → Oct 12';
+    if (!playing) return;
+    if (+slider.value >= DAYS) slider.value = 28;
+    while (playing && +slider.value <= DAYS) {
+      await run();
+      if (+slider.value === DAYS) break;
+      slider.value = +slider.value + 1;
+    }
+    playing = false;
+    $('playBtn').textContent = 'Replay Sep 1 → Oct 12';
+  }
+
+  slider.addEventListener('input', () => { $('dateLabel').textContent = nice(iso(+slider.value)); });
+  slider.addEventListener('change', run);
+  $('runBtn').addEventListener('click', run);
+  $('latestBtn').addEventListener('click', () => { slider.value = DAYS; run(); });
+  $('playBtn').addEventListener('click', play);
+  run();
+})();
+</script>
+</body>
+</html>

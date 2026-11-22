@@ -4,6 +4,7 @@ Runs every morning across every client workbook and posts one ranked list to Sla
 
 ## Run it
 ```bash
+python3 server.py                  # open http://localhost:4918 : the morning report in the browser, with a date slider to replay any morning
 pip install openpyxl
 python3 make_demo_book.py          # builds 19 demo accounts next to fieldstone.xlsx (20 total)
 python3 watchtower.py              # check all accounts on their latest data
