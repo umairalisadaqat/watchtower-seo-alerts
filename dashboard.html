@@ -5,195 +5,296 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Watchtower</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paper: oklch(97.5% 0.008 85); --paper-2: oklch(94.5% 0.012 85); --card: oklch(99% 0.004 85);
-    --ink: oklch(22% 0.015 60); --ink-2: oklch(42% 0.015 60); --ink-3: oklch(56% 0.012 60); --rule: oklch(88% 0.012 80);
-    --crit: oklch(55% 0.17 32); --crit-soft: oklch(94% 0.035 32);
-    --high: oklch(62% 0.13 60); --high-soft: oklch(95% 0.04 75);
-    --ok: oklch(50% 0.11 160); --ok-soft: oklch(94% 0.03 160);
+    --bg: oklch(17% 0.012 60); --bg-2: oklch(21% 0.013 60); --panel: oklch(23.5% 0.014 60); --line: oklch(32% 0.014 60);
+    --text: oklch(94% 0.01 80); --text-2: oklch(76% 0.014 75); --text-3: oklch(60% 0.014 70);
+    --crit: oklch(66% 0.19 30); --crit-bg: oklch(30% 0.08 30); --crit-glow: oklch(66% 0.19 30 / .45);
+    --high: oklch(78% 0.14 75); --high-bg: oklch(31% 0.06 75);
+    --ok: oklch(72% 0.12 160); --ok-bg: oklch(27% 0.035 160);
     --serif: 'Newsreader', Georgia, serif; --sans: 'IBM Plex Sans', system-ui, sans-serif; --mono: 'IBM Plex Mono', ui-monospace, monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--paper); color: var(--ink); font: 400 17px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 32px 80px; }
-  header { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
-  h1 { font: 500 52px/1 var(--serif); letter-spacing: -0.025em; }
-  .sub { color: var(--ink-2); margin-top: 10px; max-width: 60ch; }
-  .morning { text-align: right; }
-  .morning .lbl { font: 500 13px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
-  .morning .d { font: 500 40px/1.1 var(--serif); margin-top: 6px; font-variant-numeric: tabular-nums; }
+  html { background: var(--bg); }
+  body { min-height: 100vh; color: var(--text); font: 400 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased;
+    background: radial-gradient(1200px 500px at 20% -10%, oklch(24% 0.02 60), transparent 70%), var(--bg); }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 36px 36px 80px; }
 
-  .controls { margin-top: 32px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 22px 26px 18px; }
-  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  button { font: 500 16px/1 var(--sans); border-radius: 8px; padding: 12px 18px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); transition: background .15s, transform .1s; }
-  button:hover { background: var(--paper-2); }
+  /* top bar */
+  .top { display: flex; align-items: center; gap: 18px; }
+  .mark { width: 34px; height: 34px; color: var(--text); }
+  .brand { font: 500 28px/1 var(--serif); letter-spacing: -0.01em; }
+  .live { display: inline-flex; align-items: center; gap: 8px; margin-left: 6px; font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); }
+  .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 oklch(72% .12 160 / .6); animation: ping 2s infinite; }
+  @keyframes ping { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  .top .actions { margin-left: auto; display: flex; gap: 10px; }
+  button { font: 500 15px/1 var(--sans); color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 11px 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background .15s, border-color .15s, transform .1s; }
+  button:hover { background: oklch(27% 0.015 60); border-color: oklch(38% .015 60); }
   button:active { transform: translateY(1px); }
-  button.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-  button.primary:hover { background: oklch(32% 0.015 60); }
-  button:focus-visible, input:focus-visible { outline: 2px solid var(--ok); outline-offset: 2px; }
-  button[disabled] { opacity: .5; cursor: default; }
-  .status { margin-left: auto; font: 400 15px/1 var(--mono); color: var(--ink-3); }
+  button.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  button.primary:hover { background: oklch(86% 0.01 80); }
+  button svg { width: 16px; height: 16px; }
+  :focus-visible { outline: 2px solid var(--ok); outline-offset: 3px; }
 
-  .track { position: relative; margin-top: 22px; padding-bottom: 34px; }
-  input[type=range] { width: 100%; accent-color: var(--ink); height: 28px; }
-  .events { position: absolute; left: 0; right: 0; top: 30px; height: 30px; }
-  .ev { position: absolute; transform: translateX(-50%); font: 500 12px/1.2 var(--mono); color: var(--ink-3); text-align: center; white-space: nowrap; }
-  .ev::before { content: ""; display: block; width: 1.5px; height: 8px; background: currentColor; margin: 0 auto 4px; }
+  /* headline */
+  .hero { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: end; margin-top: 48px; }
+  .verdict { font: 400 64px/1.02 var(--serif); letter-spacing: -0.03em; text-wrap: balance; max-width: 18ch; transition: color .3s; }
+  .verdict em { font-style: normal; color: var(--crit); }
+  .verdict.calm em { color: var(--ok); }
+  .date { text-align: right; }
+  .date .k { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+  .date .v { font: 400 44px/1.05 var(--serif); margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .counts { display: flex; gap: 26px; margin-top: 22px; font: 500 15px/1 var(--sans); color: var(--text-2); }
+  .counts span { display: inline-flex; align-items: center; gap: 9px; }
+  .counts b { font: 500 22px/1 var(--mono); color: var(--text); font-variant-numeric: tabular-nums; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* timeline */
+  .timeline { margin-top: 34px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; padding: 22px 26px 16px; }
+  .tl-head { display: flex; justify-content: space-between; font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); }
+  .rail { position: relative; height: 92px; margin-top: 12px; }
+  .rail input { position: absolute; inset: 22px 0 auto; width: 100%; height: 28px; -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; z-index: 3; }
+  .rail input::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: transparent; }
+  .rail::before { content: ""; position: absolute; left: 0; right: 0; top: 34px; height: 4px; border-radius: 2px; background: var(--line); z-index: 1; }
+  .rail input::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: var(--text); border: 4px solid var(--bg-2); box-shadow: 0 0 0 1px var(--text-3), 0 4px 12px oklch(0% 0 0 / .4); }
+  .rail input::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--text); border: 4px solid var(--bg-2); }
+  .fill { position: absolute; left: 0; right: 0; top: 34px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--ok), var(--ok) var(--safe, 100%), var(--crit) var(--safe, 100%)); z-index: 2; pointer-events: none; transform-origin: left; transform: scaleX(var(--p, 1)); transition: transform .15s; }
+  .ev { position: absolute; top: 46px; transform: translateX(-50%); text-align: center; font: 500 11.5px/1.3 var(--mono); color: var(--text-3); white-space: nowrap; pointer-events: none; }
+  .ev::before { content: ""; display: block; width: 1px; height: 10px; margin: 0 auto 5px; background: currentColor; }
   .ev.bad { color: var(--crit); }
+  .ev.first { color: var(--ok); top: -2px; }
+  .ev.first::before { display: none; }
+  .ev.first::after { content: ""; display: block; width: 1px; height: 12px; margin: 4px auto 0; background: currentColor; }
 
-  .summary { margin-top: 30px; display: flex; gap: 28px; align-items: baseline; flex-wrap: wrap; font: 500 20px/1.3 var(--sans); }
-  .summary b { font: 500 34px/1 var(--serif); margin-right: 6px; font-variant-numeric: tabular-nums; }
-  .summary .c b { color: var(--crit); } .summary .h b { color: var(--high); } .summary .o b { color: var(--ok); }
+  /* book of accounts */
+  .book-head { display: flex; justify-content: space-between; align-items: baseline; margin-top: 40px; }
+  .book-head h2 { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+  .book-head p { color: var(--text-3); font-size: 14px; }
+  .book { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 14px; }
+  .tile { position: relative; text-align: left; padding: 14px 16px 15px; border-radius: 11px; background: var(--panel); border: 1px solid var(--line); min-height: 78px; display: block; transition: background .25s, border-color .25s, box-shadow .25s; }
+  .tile .nm { font: 500 15px/1.25 var(--sans); color: var(--text-2); }
+  .tile .st { margin-top: 8px; font: 500 11.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ok); display: flex; align-items: center; gap: 7px; }
+  .tile .st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .tile.HIGH { background: var(--high-bg); border-color: oklch(48% .1 75); }
+  .tile.HIGH .nm { color: var(--text); } .tile.HIGH .st { color: var(--high); }
+  .tile.CRITICAL { background: var(--crit-bg); border-color: var(--crit); box-shadow: 0 0 0 0 var(--crit-glow); animation: alarm 1.6s ease-out infinite; }
+  .tile.CRITICAL .nm { color: var(--text); } .tile.CRITICAL .st { color: var(--crit); }
+  @keyframes alarm { 0% { box-shadow: 0 0 0 0 var(--crit-glow); } 70% { box-shadow: 0 0 0 12px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  .tile.sel { outline: 2px solid var(--text); outline-offset: 2px; }
+  .tile[disabled] { cursor: default; }
+  .tile:not([disabled]):hover { border-color: var(--text-3); }
 
-  .acct { margin-top: 18px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; animation: rise .35s cubic-bezier(.16,1,.3,1) both; }
-  @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
-  .acct-head { display: flex; align-items: center; gap: 14px; padding: 18px 24px; border-bottom: 1px solid var(--rule); }
-  .acct-head h2 { font: 500 28px/1.1 var(--serif); letter-spacing: -0.01em; }
-  .acct-head .n { margin-left: auto; color: var(--ink-3); font: 400 15px/1 var(--mono); }
-  .sev { font: 600 12px/1 var(--mono); letter-spacing: .06em; padding: 7px 10px 6px; border-radius: 5px; }
-  .sev.CRITICAL { background: var(--crit-soft); color: var(--crit); }
-  .sev.HIGH { background: var(--high-soft); color: oklch(45% .12 60); }
-  .sev.MEDIUM { background: var(--paper-2); color: var(--ink-2); }
+  /* dossier */
+  .dossier { margin-top: 34px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; animation: rise .35s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+  .d-head { display: flex; align-items: center; gap: 16px; padding: 22px 28px; border-bottom: 1px solid var(--line); }
+  .d-head h3 { font: 400 40px/1 var(--serif); letter-spacing: -0.02em; }
+  .d-head .n { margin-left: auto; font: 400 14px/1 var(--mono); color: var(--text-3); }
+  .sev { font: 600 11.5px/1 var(--mono); letter-spacing: .08em; padding: 7px 10px 6px; border-radius: 5px; }
+  .sev.CRITICAL { background: var(--crit); color: oklch(16% .02 30); }
+  .sev.HIGH { background: var(--high); color: oklch(18% .02 75); }
+  .sev.MEDIUM, .sev.LOW { background: var(--line); color: var(--text-2); }
+  .f { display: grid; grid-template-columns: 190px 1fr 170px; gap: 28px; padding: 22px 28px; border-bottom: 1px solid var(--line); }
+  .f:last-child { border-bottom: 0; }
+  .f .t { font: 600 15px/1.3 var(--sans); letter-spacing: .01em; }
+  .f .s { font: 400 13px/1.3 var(--mono); color: var(--text-3); margin-top: 5px; }
+  .f .since { margin-top: 10px; font: 400 13px/1.3 var(--mono); color: var(--text-3); }
+  .f .detail { color: var(--text-2); font-size: 15.5px; line-height: 1.55; overflow-wrap: anywhere; max-width: 70ch; }
+  .f .detail.clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .more { margin-top: 6px; background: none; border: 0; padding: 0; color: var(--text-3); font: 500 13px/1 var(--mono); text-decoration: underline; text-underline-offset: 3px; }
+  .more:hover { background: none; color: var(--text); }
+  .cause { margin-top: 12px; display: flex; gap: 10px; align-items: baseline; font-size: 14.5px; color: var(--text); }
+  .cause span { flex: none; font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--high); border: 1px solid oklch(48% .1 75); border-radius: 4px; padding: 5px 7px 4px; }
+  .share { text-align: right; }
+  .share b { display: block; font: 400 36px/1 var(--serif); font-variant-numeric: tabular-nums; }
+  .share small { font: 400 12.5px/1 var(--mono); color: var(--text-3); }
+  .bar { height: 5px; border-radius: 3px; background: var(--line); margin-top: 12px; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 3px; background: var(--crit); transform-origin: left; animation: grow .7s cubic-bezier(.16,1,.3,1) both .15s; }
+  .bar i.HIGH { background: var(--high); }
+  @keyframes grow { from { transform: scaleX(0); } }
 
-  .finding { display: grid; grid-template-columns: 150px 1fr 150px; gap: 20px; padding: 18px 24px; border-bottom: 1px solid var(--rule); }
-  .finding:last-child { border-bottom: 0; }
-  .finding .type { font: 600 15px/1.3 var(--sans); }
-  .finding .sec { font: 400 14px/1.3 var(--mono); color: var(--ink-3); margin-top: 4px; }
-  .finding .detail { color: var(--ink-2); font-size: 16px; overflow-wrap: anywhere; }
-  .finding .cause { margin-top: 10px; font-size: 15px; color: var(--ink); background: var(--paper-2); border-radius: 6px; padding: 8px 12px; }
-  .finding .cause span { font: 500 12px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 4px; }
-  .finding .meta { text-align: right; font: 400 14px/1.5 var(--mono); color: var(--ink-3); }
-  .finding .meta strong { display: block; font: 500 22px/1.1 var(--serif); color: var(--ink); }
+  .quiet { margin-top: 34px; padding: 34px 28px; border: 1px dashed var(--line); border-radius: 16px; color: var(--text-2); font: 400 26px/1.3 var(--serif); }
+  .err { margin-top: 24px; padding: 16px 20px; border-radius: 10px; background: var(--crit-bg); color: var(--text); border: 1px solid var(--crit); }
 
-  .healthy { margin-top: 26px; }
-  .healthy h3 { font: 500 13px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { font: 400 14px/1 var(--sans); padding: 8px 12px; border-radius: 999px; background: var(--ok-soft); color: oklch(38% .09 160); }
-  .err { margin-top: 24px; padding: 16px 20px; border-radius: 10px; background: var(--crit-soft); color: var(--crit); }
-  .empty { margin-top: 24px; color: var(--ink-3); }
-  @media (max-width: 760px) {
-    .finding { grid-template-columns: 1fr; gap: 8px; } .finding .meta { text-align: left; }
-    .morning { text-align: left; } h1 { font-size: 40px; }
-    .events { display: none; } .track { padding-bottom: 6px; }
+  @media (max-width: 900px) {
+    .wrap { padding: 24px 16px 60px; }
+    .hero { grid-template-columns: 1fr; gap: 14px; } .date { text-align: left; }
+    .verdict { font-size: 40px; } .date .v { font-size: 30px; }
+    .book { grid-template-columns: repeat(2, 1fr); }
+    .f { grid-template-columns: 1fr; gap: 10px; } .share { text-align: left; }
+    .top .actions button span { display: none; }
+    .ev { display: none; } .ev.first { display: none; } .rail { height: 54px; }
+    .live, .tl-head span:nth-child(2) { display: none; }
   }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div>
-      <h1>Watchtower</h1>
-      <p class="sub">The morning SEO check across all 20 accounts. Ranked by how many leads each problem puts at risk.</p>
+  <div class="top">
+    <svg class="mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M10 29l3-17h6l3 17"/><path d="M11.5 20h9M12.4 15h7.2"/><path d="M9 12h14l-2-5H11z"/><path d="M16 7V3"/><path d="M5 5.5q-2 4 0 8M27 5.5q2 4 0 8" stroke-linecap="round"/></svg>
+    <span class="brand">Watchtower</span>
+    <span class="live"><i></i>20 accounts · daily 7:00</span>
+    <div class="actions">
+      <button id="playBtn" aria-label="Replay September to October"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Replay Sep 1 → Oct 12</span></button>
+      <button class="primary" id="runBtn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg><span>Run morning check</span></button>
     </div>
-    <div class="morning"><div class="lbl">Morning of</div><div class="d" id="dateLabel">Oct 12, 2026</div></div>
-  </header>
+  </div>
 
-  <section class="controls" aria-label="Replay controls">
-    <div class="row">
-      <button class="primary" id="runBtn">Run morning check</button>
-      <button id="playBtn">Replay Sep 1 → Oct 12</button>
-      <button id="latestBtn">Jump to latest</button>
-      <span class="status" id="status" role="status" aria-live="polite"></span>
+  <section class="hero">
+    <div>
+      <h1 class="verdict" id="verdict">Checking the book…</h1>
+      <div class="counts" id="counts"></div>
     </div>
-    <div class="track">
-      <input type="range" id="day" min="0" max="69" value="69" aria-label="Which morning to check">
-      <div class="events" id="events"></div>
+    <div class="date"><div class="k">Morning of</div><div class="v" id="dateLabel">Oct 12, 2026</div></div>
+  </section>
+
+  <section class="timeline" aria-label="Pick a morning to replay">
+    <div class="tl-head"><span>Aug 4</span><span>Drag to replay any morning</span><span>Oct 12</span></div>
+    <div class="rail" id="rail">
+      <div class="fill" id="fill"></div>
+      <input type="range" id="day" min="0" max="69" value="69" aria-label="Morning to check">
     </div>
   </section>
 
-  <div id="out"></div>
+  <div class="book-head"><h2>The book</h2><p id="bookHint">Click an account to open its file</p></div>
+  <section class="book" id="book" aria-label="All accounts"></section>
+
+  <div id="out" aria-live="polite"></div>
 </div>
 
 <script>
 (() => {
-  const START = Date.UTC(2026, 7, 4);
-  const DAYS = 69;
+  const START = Date.UTC(2026, 7, 4), DAYS = 69;
   const EVENTS = [
     { d: '2026-09-08', t: 'Redesign live', bad: true },
     { d: '2026-09-15', t: 'Google update' },
     { d: '2026-09-22', t: 'Blog sprint', bad: true },
     { d: '2026-10-06', t: 'Dana complains', bad: true },
   ];
+  const FIRST_ALERT = '2026-09-08';
   const $ = (id) => document.getElementById(id);
-  const slider = $('day'), out = $('out'), status = $('status');
+  const slider = $('day');
   const iso = (i) => new Date(START + i * 864e5).toISOString().slice(0, 10);
-  const nice = (s) => new Date(s + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  const idx = (d) => (Date.parse(d + 'T00:00:00Z') - START) / 864e5;
+  const nice = (s, y = true) => new Date(s + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', ...(y ? { year: 'numeric' } : {}), timeZone: 'UTC' });
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const pretty = (n) => n.replace(/^Demo-/, '').replace(/-/g, ' ');
   const rank = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+  const pct = (i) => (i / DAYS) * 100;
 
-  $('events').innerHTML = EVENTS.map((e) => {
-    const i = (Date.parse(e.d + 'T00:00:00Z') - START) / 864e5;
-    return `<div class="ev ${e.bad ? 'bad' : ''}" style="left:${(i / DAYS) * 100}%">${e.t}<br>${nice(e.d).replace(', 2026', '')}</div>`;
-  }).join('');
+  const rail = $('rail');
+  rail.insertAdjacentHTML('beforeend',
+    EVENTS.map((e) => `<div class="ev ${e.bad ? 'bad' : ''}" style="left:${pct(idx(e.d))}%">${e.t}<br>${nice(e.d, false)}</div>`).join('') +
+    `<div class="ev first" style="left:${pct(idx(FIRST_ALERT))}%">Watchtower fires</div>`);
+  rail.style.setProperty('--safe', '100%');
 
-  let playing = false, busy = false;
+  let state = { data: null, selected: null }, busy = false, playing = false;
 
-  function render(data) {
-    const accts = Object.entries(data.accounts);
-    const flagged = accts.filter(([, f]) => f.length)
+  function syncRail() {
+    const v = +slider.value;
+    const firstPct = pct(idx(FIRST_ALERT));
+    $('fill').style.setProperty('--p', v / DAYS);
+    $('fill').style.setProperty('--safe', v >= idx(FIRST_ALERT) ? firstPct + '%' : '100%');
+    $('dateLabel').textContent = nice(iso(v));
+  }
+
+  function sortedFlagged(accounts) {
+    return Object.entries(accounts).filter(([, f]) => f.length)
       .map(([n, f]) => [n, [...f].sort((a, b) => rank[a.severity] - rank[b.severity] || b.lead_share - a.lead_share)])
       .sort((a, b) => rank[a[1][0].severity] - rank[b[1][0].severity] || b[1].length - a[1].length);
-    const healthy = accts.filter(([, f]) => !f.length).map(([n]) => n);
-    const crit = flagged.filter(([, f]) => f[0].severity === 'CRITICAL').length;
-    const high = flagged.length - crit;
-    const pretty = (n) => n.replace(/^Demo-/, '').replace(/-/g, ' ');
+  }
 
-    out.innerHTML = `
-      <div class="summary"><span class="c"><b>${crit}</b>critical</span><span class="h"><b>${high}</b>needs a look</span><span class="o"><b>${healthy.length}</b>healthy</span></div>
-      ${flagged.map(([name, fs]) => `
-        <article class="acct">
-          <div class="acct-head"><span class="sev ${fs[0].severity}">${fs[0].severity}</span><h2>${esc(pretty(name))}</h2><span class="n">${fs.length} issue${fs.length > 1 ? 's' : ''}</span></div>
-          ${fs.map((f) => `
-            <div class="finding">
-              <div><div class="type">${esc(f.type)}</div><div class="sec">${esc(f.section)}</div></div>
-              <div><div class="detail">${esc(f.detail)}</div>
-                ${(f.likely_causes || []).map((c) => `<div class="cause"><span>Possible cause</span>${esc(c)}</div>`).join('')}</div>
-              <div class="meta"><strong>${Math.round(f.lead_share * 100)}%</strong>of leads${f.started ? `<br>since ${esc(nice(f.started).replace(', 2026', ''))}` : ''}</div>
-            </div>`).join('')}
-        </article>`).join('')}
-      ${flagged.length ? '' : '<p class="empty">No problems found on this morning.</p>'}
-      <div class="healthy"><h3>Healthy</h3><div class="chips">${healthy.map((n) => `<span class="chip">${esc(pretty(n))}</span>`).join('')}</div></div>`;
+  function render() {
+    const accounts = state.data.accounts;
+    const flagged = sortedFlagged(accounts);
+    const worst = Object.fromEntries(flagged.map(([n, f]) => [n, f[0].severity]));
+    const crit = flagged.filter(([, f]) => f[0].severity === 'CRITICAL').length;
+    const warn = flagged.length - crit;
+    const healthy = Object.keys(accounts).length - flagged.length;
+
+    const v = $('verdict');
+    if (crit) { v.className = 'verdict'; v.innerHTML = `<em>${esc(pretty(flagged[0][0]))}</em> needs you this morning.`; }
+    else if (warn) { v.className = 'verdict'; v.innerHTML = `One to watch. <em>${esc(pretty(flagged[0][0]))}</em> is slipping.`; }
+    else { v.className = 'verdict calm'; v.innerHTML = `All quiet. <em>Nothing</em> to chase today.`; }
+
+    $('counts').innerHTML =
+      `<span><i class="dot" style="background:var(--crit)"></i><b>${crit}</b> critical</span>` +
+      `<span><i class="dot" style="background:var(--high)"></i><b>${warn}</b> watch</span>` +
+      `<span><i class="dot" style="background:var(--ok)"></i><b>${healthy}</b> healthy</span>`;
+
+    if (!state.selected || !accounts[state.selected] || !accounts[state.selected].length) state.selected = flagged.length ? flagged[0][0] : null;
+
+    const order = [...flagged.map(([n]) => n), ...Object.keys(accounts).filter((n) => !accounts[n].length)];
+    $('book').innerHTML = order.map((n) => {
+      const s = worst[n];
+      return `<button class="tile ${s || ''} ${n === state.selected ? 'sel' : ''}" data-n="${esc(n)}" ${s ? '' : 'disabled'} aria-label="${esc(pretty(n))}: ${s ? s.toLowerCase() : 'healthy'}">
+        <div class="nm">${esc(pretty(n))}</div><div class="st">${s ? (s === 'CRITICAL' ? 'Critical' : 'Watch') : 'Healthy'}</div></button>`;
+    }).join('');
+    $('bookHint').textContent = flagged.length ? 'Click an account to open its file' : '';
+
+    if (!state.selected) { $('out').innerHTML = `<div class="quiet">Every account is behaving like its own normal. Nobody gets paged.</div>`; return; }
+    const fs = flagged.find(([n]) => n === state.selected)[1];
+    $('out').innerHTML = `
+      <article class="dossier">
+        <div class="d-head"><span class="sev ${fs[0].severity}">${fs[0].severity}</span><h3>${esc(pretty(state.selected))}</h3><span class="n">${fs.length} finding${fs.length > 1 ? 's' : ''}, worst first</span></div>
+        ${fs.map((f, k) => `
+          <div class="f">
+            <div><div class="t">${esc(f.type)}</div><div class="s">${esc(f.section)}</div>${f.started ? `<div class="since">since ${esc(nice(f.started, false))}</div>` : ''}</div>
+            <div>
+              <div class="detail ${f.detail.length > 260 ? 'clamp' : ''}" id="d${k}">${esc(f.detail)}</div>
+              ${f.detail.length > 260 ? `<button class="more" data-k="${k}">Show all</button>` : ''}
+              ${(f.likely_causes || []).map((c) => `<div class="cause"><span>Likely cause</span>${esc(c.replace(/^\d{4}-(\d{2})-(\d{2}) /, (m, mo, da) => nice(`2026-${mo}-${da}`, false) + ' · '))}</div>`).join('')}
+            </div>
+            <div class="share"><b>${Math.round(f.lead_share * 100)}%</b><small>of leads at risk</small><div class="bar"><i class="${f.severity}" style="width:${Math.max(4, f.lead_share * 100)}%"></i></div></div>
+          </div>`).join('')}
+      </article>`;
   }
 
   async function run() {
     if (busy) return;
     busy = true;
-    const d = iso(+slider.value);
-    $('dateLabel').textContent = nice(d);
-    status.textContent = 'Checking 20 accounts…';
+    syncRail();
     try {
-      const r = await fetch('/api/run?as_of=' + d);
+      const r = await fetch('/api/run?as_of=' + iso(+slider.value));
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || 'Check failed');
-      render(data);
-      status.textContent = `Checked ${Object.keys(data.accounts).length} accounts`;
+      state.data = data;
+      render();
     } catch (e) {
-      out.innerHTML = `<div class="err">Couldn't run the check: ${esc(e.message)}. Is server.py still running?</div>`;
-      status.textContent = '';
+      $('out').innerHTML = `<div class="err">Couldn't run the check: ${esc(e.message)}. Is server.py still running?</div>`;
       playing = false;
     } finally { busy = false; }
   }
 
   async function play() {
     playing = !playing;
-    $('playBtn').textContent = playing ? 'Pause' : 'Replay Sep 1 → Oct 12';
+    $('playBtn').querySelector('span').textContent = playing ? 'Pause' : 'Replay Sep 1 → Oct 12';
     if (!playing) return;
     if (+slider.value >= DAYS) slider.value = 28;
-    while (playing && +slider.value <= DAYS) {
+    while (playing) {
       await run();
-      if (+slider.value === DAYS) break;
+      if (+slider.value >= DAYS) break;
       slider.value = +slider.value + 1;
     }
     playing = false;
-    $('playBtn').textContent = 'Replay Sep 1 → Oct 12';
+    $('playBtn').querySelector('span').textContent = 'Replay Sep 1 → Oct 12';
   }
 
-  slider.addEventListener('input', () => { $('dateLabel').textContent = nice(iso(+slider.value)); });
+  $('book').addEventListener('click', (e) => {
+    const t = e.target.closest('.tile');
+    if (!t || t.disabled) return;
+    state.selected = t.dataset.n; render();
+  });
+  $('out').addEventListener('click', (e) => {
+    const b = e.target.closest('.more'); if (!b) return;
+    $('d' + b.dataset.k).classList.toggle('clamp');
+    b.textContent = b.textContent === 'Show all' ? 'Show less' : 'Show all';
+  });
+  slider.addEventListener('input', syncRail);
   slider.addEventListener('change', run);
   $('runBtn').addEventListener('click', run);
-  $('latestBtn').addEventListener('click', () => { slider.value = DAYS; run(); });
   $('playBtn').addEventListener('click', play);
   run();
 })();
